@@ -7,7 +7,7 @@ var router = express.Router();
 var session = require('express-session');
 var passport = require("passport");
 var passportLocalMongoose = require("passport-local-mongoose");
-
+const path = require('path');
 var app = express();
 
 //app.set('view engine', 'ejs');
@@ -26,6 +26,12 @@ app.use(session({
   
 app.use(passport.initialize());
 app.use(passport.session());
+
+const publicPath = path.join(__dirname, '..', 'public');
+app.use(express.static(publicPath));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+ });
 
 
 //Connecting to MongoDB using mongoose
@@ -138,5 +144,6 @@ router.get('/logout', function(req, res){
 
 app.use('/api', router);
 
-app.listen(3001);
+app.listen(process.env.PORT || 3001);
+
 console.log("Listening to port 3001\n");
